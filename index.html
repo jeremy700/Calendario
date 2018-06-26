@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="es-CR">
+<html lang="es-CR" ng-app="app">
     <head>
         <meta charset="utf-8">
         <meta http-equiv="content-type" content="text/html; charset=utf-8">
@@ -9,24 +9,26 @@
         <!-- INICIA: HOJAS DE ESTILO -->
         <!-- General -->
         <link rel="stylesheet" href="css/calendario.css">
+        <link rel="stylesheet" href="css/bootstrap.css">
         
         <!-- BOOTSTRAP & JQUERY -->
 
         <!-- FIN: HOJAS DE ESTILO -->
 
     </head>
-    <body>
+    <body ng-controller="principalCtrl">
         <!-- PÁGINAS DE LA APLICACIÓN (ng-view)-->
-        
+        <ng-view></ng-view>
         <!-- INICIA: SECCIÓN DE SCRIPTS -->
-        <script src="lib/jquery-2.2.4.js"></script>
-        <script src="lib/bootstrap.js"></script>
-        <script src="lib/angular.js"></script>        <!-- VS 1.5.8 -->
+        <script src="librerias/jquery-2.2.4.js"></script>
+        <script src="librerias/bootstrap.js"></script>
+        <script src="librerias/angular.js"></script>
+        <script src="librerias/angular-route.js"></script>
    
-         <!-- APLICACIÓN, CONTROLADORES, DIRECTIVAS Y SERVICIOS -->
-   
+        <!-- APLICACIÓN, CONTROLADORES, DIRECTIVAS Y SERVICIOS -->
+        <script src="app/app.js"></script>
         <!-- :::::::::::::::::. CONTROLLERS .:::::::::::::::::-->
-      
+        <script src="app/controllersApp/principalController.js"></script>
         <!-- :::::::::::::::::. DIRECTIVES .:::::::::::::::::-->
    
         <!-- :::::::::::::::::. SERVICES .:::::::::::::::::-->
