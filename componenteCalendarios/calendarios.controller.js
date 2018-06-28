@@ -2,7 +2,6 @@ app.controller('calendariosCtrl', function($scope){
     $scope.calendarios = {};
     $scope.calendarios.fechaInicial='';
     $scope.calendarios.cantidadDias='';
-    //$scope.calendarios.vectorDias2=[1,2,3,4,5,6,7,8,9,10,11,12];
 
     $scope.calendarios.crearDia=function(fecha){
         var elemento={}
@@ -20,7 +19,6 @@ app.controller('calendariosCtrl', function($scope){
             elemento.ano='';
             return elemento;
         }
-        
     }
 
     $scope.calendarios.crearMatriz = function(data, n) {
@@ -45,9 +43,9 @@ app.controller('calendariosCtrl', function($scope){
             var primerDia=new Date(arrayAordenar[0]+"/"+arrayAordenar[1]+"/01");
             var primerDiaNum=primerDia.getDay();
             var fecha = new Date(fechaEspanol);
-            
+            $scope.calendarios.mostradoMes(primerDia);
+
             if(primerDia.getTime()!=fecha.getTime()){
-                console.log(fecha.getDate());
                 primerDiaNum=primerDiaNum+(fecha.getDate()-1);
             }
 
@@ -58,12 +56,27 @@ app.controller('calendariosCtrl', function($scope){
                 
                 if(i>=$scope.calendarios.cantidadDias-1){
                     if(primerDiaNum==0){
-                        $scope.calendarios.inspireList = $scope.calendarios.crearMatriz($scope.calendarios.vectorDias, 7);    
+                        if($scope.calendarios.vectorDias.length<42){
+                            for(var y=$scope.calendarios.vectorDias.length; y<42; y++){
+                                $scope.calendarios.vectorDias.push($scope.calendarios.crearDia(''));
+                                if(y>=41){
+                                    $scope.calendarios.inspireList = $scope.calendarios.crearMatriz($scope.calendarios.vectorDias, 7);    
+                                }
+                            }
+                        }
                     }else{
                         for(var j=0; j<primerDiaNum; j++){
                             $scope.calendarios.vectorDias.unshift($scope.calendarios.crearDia(''));
                             if(j>=primerDiaNum-1){
-                                $scope.calendarios.inspireList = $scope.calendarios.crearMatriz($scope.calendarios.vectorDias, 7);
+                                if($scope.calendarios.vectorDias.length<42){
+                                    for(var y=$scope.calendarios.vectorDias.length; y<42; y++){
+                                        $scope.calendarios.vectorDias.push($scope.calendarios.crearDia(''));
+                                        if(y>=41){
+                                            $scope.calendarios.inspireList = $scope.calendarios.crearMatriz($scope.calendarios.vectorDias, 7);    
+                                            console.log($scope.calendarios.inspireList);
+                                        }
+                                    }
+                                }
                             }
                         }
                     }
@@ -72,4 +85,46 @@ app.controller('calendariosCtrl', function($scope){
             
         }
     }
+    $scope.calendarios.mostradoMes=function(fecha){
+        
+        switch (fecha.getMonth()){
+          case 0:
+            $scope.calendarios.mesMostrado="Enero "+fecha.getFullYear();
+          break;
+          case 1:
+            $scope.calendarios.mesMostrado="Febrero "+fecha.getFullYear();
+          break;
+          case 2:
+            $scope.calendarios.mesMostrado="Marzo "+fecha.getFullYear();
+          break;
+          case 3:
+            $scope.calendarios.mesMostrado="Abril "+fecha.getFullYear();
+          break;
+          case 4:
+            $scope.calendarios.mesMostrado="Mayo "+fecha.getFullYear();
+          break;
+          case 5:
+            $scope.calendarios.mesMostrado="Junio "+fecha.getFullYear();
+          break;
+          case 6:
+            $scope.calendarios.mesMostrado="Julio "+fecha.getFullYear();
+          break;
+          case 7:
+            $scope.calendarios.mesMostrado="Agosto "+fecha.getFullYear();
+          break;
+          case 8:
+            $scope.calendarios.mesMostrado="Septiembre "+fecha.getFullYear();
+          break;
+          case 9:
+            $scope.calendarios.mesMostrado="Octubre "+fecha.getFullYear();
+          break;
+          case 10:
+            $scope.calendarios.mesMostrado="Nobiembre "+fecha.getFullYearar();
+          break;
+          case 11:
+            $scope.calendarios.mesMostrado="Diciembre "+fecha.getFullYear();
+          break;
+        } 
+    }
+    
 });
