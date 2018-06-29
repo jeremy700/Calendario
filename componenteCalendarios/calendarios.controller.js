@@ -1,7 +1,8 @@
-app.controller('calendariosCtrl', function($scope){
+app.controller('calendariosCtrl', function($scope, $compile){
     $scope.calendarios = {};
     $scope.calendarios.fechaInicial='';
     $scope.calendarios.cantidadDias='';
+    $scope.calendarios.divisionMeses=0;
 
     $scope.calendarios.crearDia=function(fecha){
         var elemento={}
@@ -11,12 +12,19 @@ app.controller('calendariosCtrl', function($scope){
             elemento.mes=arrayFecha[1];
             elemento.numDia=arrayFecha[2];
             elemento.ano=arrayFecha[3];
+            if((arrayFecha[0]=="Sun")||(arrayFecha[0]=="Sat") ){
+                elemento.color="#F0F02B";
+            }else{
+                elemento.color="#C0F04B";
+            }
+            
             return elemento;
         }else{
             elemento.dia='';
             elemento.mes='';
             elemento.numDia='';
             elemento.ano='';
+            elemento.color='#B0B2AB';
             return elemento;
         }
     }
@@ -33,7 +41,18 @@ app.controller('calendariosCtrl', function($scope){
         return grid;
     };
 
+    $scope.calendarios.limpiarPantalla=function(){
+        /* --Remover calendarios--*/
+        var element = document.getElementById('contenedorCalendarios');
+        while (element.firstChild) {
+        element.removeChild(element.firstChild);
+        }
+        /* --Fin remover calendarios--*/
+        $scope.calendarios.generarCalendarios();
+    }
+
     $scope.calendarios.generarCalendarios=function(){
+
         if(($scope.calendarios.fechaInicial!='')&&($scope.calendarios.cantidadDias!='')){
             $scope.calendarios.vectorDias=[];
             var fechaInicial=$("#start").val();
@@ -60,7 +79,8 @@ app.controller('calendariosCtrl', function($scope){
                             for(var y=$scope.calendarios.vectorDias.length; y<42; y++){
                                 $scope.calendarios.vectorDias.push($scope.calendarios.crearDia(''));
                                 if(y>=41){
-                                    $scope.calendarios.inspireList = $scope.calendarios.crearMatriz($scope.calendarios.vectorDias, 7);    
+                                    $scope.calendarios.inspireList = $scope.calendarios.crearMatriz($scope.calendarios.vectorDias, 7); 
+                                    $scope.calendarios.pintarCalendario();   
                                 }
                             }
                         }
@@ -73,7 +93,7 @@ app.controller('calendariosCtrl', function($scope){
                                         $scope.calendarios.vectorDias.push($scope.calendarios.crearDia(''));
                                         if(y>=41){
                                             $scope.calendarios.inspireList = $scope.calendarios.crearMatriz($scope.calendarios.vectorDias, 7);    
-                                            console.log($scope.calendarios.inspireList);
+                                            $scope.calendarios.pintarCalendario();
                                         }
                                     }
                                 }
@@ -127,4 +147,33 @@ app.controller('calendariosCtrl', function($scope){
         } 
     }
     
+    $scope.calendarios.pintarCalendario=function(){
+
+        var divHtml="<div style='width: 30%; padding-left: 1%'>"+
+            "<h2>"+$scope.calendarios.mesMostrado+"</h2>"+
+            "<table class='table table-bordered'>"+
+            "<thead>"+
+                "<tr>"+
+                "<th>Dom</th>"+
+                "<th>Lun</th>"+
+                "<th>Mar</th>"+
+                "<th>Mie</th>"+
+                "<th>Jue</th>"+
+                "<th>vie</th>"+
+                "<th>Sab</th>"+
+                "</tr>"+
+            "</thead>"+
+            "<tbody>"+
+                "<tr ng-repeat='items in calendarios.inspireList'>"+
+                "<td ng-repeat='item in items' style='height: 35px; background-color: {{item.color}}'>{{item.numDia}}</td>"+
+                "</tr>"+
+            "</tbody>"+
+            "</table>"+
+        "</div>";
+        /*************bootstrapping ***************/
+        var vTemplate = angular.element(divHtml);
+        angular.element(document.getElementById('contenedorCalendarios')).append(vTemplate);
+        $compile(vTemplate)($scope);
+        /**********End bootstrapping **************/
+    }
 });
