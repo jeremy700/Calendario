@@ -2,8 +2,9 @@ app.controller('calendariosCtrl', function($scope, $compile){
     $scope.calendarios = {};
     $scope.calendarios.fechaInicial='';
     $scope.calendarios.cantidadDias='';
-    $scope.calendarios.divisionMeses=0;
-
+    $scope.calendarios.primeraFechaDelMes='';
+    $scope.calendarios.contador=0;
+    
     $scope.calendarios.crearDia=function(fecha){
         var elemento={}
         if(fecha!=""){
@@ -42,69 +43,88 @@ app.controller('calendariosCtrl', function($scope, $compile){
     };
 
     $scope.calendarios.limpiarPantalla=function(){
-        /* --Remover calendarios--*/
-        var element = document.getElementById('contenedorCalendarios');
-        while (element.firstChild) {
-        element.removeChild(element.firstChild);
+        if(($scope.calendarios.fechaInicial!='')&&($scope.calendarios.cantidadDiasElegidos!='')){
+            $scope.calendarios.cantidadDias=$scope.calendarios.cantidadDiasElegidos;
+            $scope.calendarios.primeraFechaDelMes=$("#start").val();
+            /* --Remover calendarios--*/
+            var element = document.getElementById('contenedorCalendarios');
+            while (element.firstChild) {
+            element.removeChild(element.firstChild);
+            }
+            /* --Fin remover calendarios--*/
+            $scope.calendarios.generarMes();
         }
-        /* --Fin remover calendarios--*/
-        $scope.calendarios.generarCalendarios();
     }
 
-    $scope.calendarios.generarCalendarios=function(){
+    $scope.calendarios.generarMes=function(){
+        
+        $scope.calendarios.vectorDias=[];
+        var fechaInicial=$scope.calendarios.primeraFechaDelMes;
+        console.log(fechaInicial);
+        var arrayAordenar=fechaInicial.split('-');
+        var fechaEspanol=arrayAordenar[0]+"/"+arrayAordenar[1]+"/"+arrayAordenar[2];
+        
+        var primerDia=new Date(arrayAordenar[0]+"/"+arrayAordenar[1]+"/01");
+        $scope.calendarios.primerDiaNum=primerDia.getDay();
+        var fecha = new Date(fechaEspanol);
+        $scope.calendarios.mostradoMes(primerDia);
 
-        if(($scope.calendarios.fechaInicial!='')&&($scope.calendarios.cantidadDias!='')){
-            $scope.calendarios.vectorDias=[];
-            var fechaInicial=$("#start").val();
-            var arrayAordenar=fechaInicial.split('-');
-            var fechaEspanol=arrayAordenar[0]+"/"+arrayAordenar[1]+"/"+arrayAordenar[2];
-            
-            var primerDia=new Date(arrayAordenar[0]+"/"+arrayAordenar[1]+"/01");
-            var primerDiaNum=primerDia.getDay();
-            var fecha = new Date(fechaEspanol);
-            $scope.calendarios.mostradoMes(primerDia);
+        if(primerDia.getTime()!=fecha.getTime()){
+            $scope.calendarios.primerDiaNum=$scope.calendarios.primerDiaNum+(fecha.getDate()-1);
+        }
 
-            if(primerDia.getTime()!=fecha.getTime()){
-                primerDiaNum=primerDiaNum+(fecha.getDate()-1);
-            }
-
-            $scope.calendarios.vectorDias.push($scope.calendarios.crearDia(fecha));
-            for(var i=1; i<$scope.calendarios.cantidadDias; i++){
-                fecha.setDate(fecha.getDate() + 1);
+        $scope.calendarios.vectorDias.push($scope.calendarios.crearDia(fecha));
+        for(var i=1; i<$scope.calendarios.cantidadDias; i++){
+            fecha.setDate(fecha.getDate() + 1);
+           
+            if(fecha.getMonth()!=primerDia.getMonth()){
+                $scope.calendarios.armarCalendarioMes($scope.calendarios.primerDiaNum, $scope.calendarios.vectorDias);            
+                var vectorfecha=fecha.toString().split(' ');
+                var meSig =fecha.getMonth()+1;
+                $scope.calendarios.primeraFechaDelMes=vectorfecha[3]+"-"+meSig+"-"+vectorfecha[2];
+                $scope.calendarios.cantidadDias=$scope.calendarios.cantidadDias-i;
+                i=$scope.calendarios.cantidadDias-1;
+                $scope.calendarios.generarMes();
+               // break;
+            }else{
                 $scope.calendarios.vectorDias.push($scope.calendarios.crearDia(fecha));
-                
-                if(i>=$scope.calendarios.cantidadDias-1){
-                    if(primerDiaNum==0){
-                        if($scope.calendarios.vectorDias.length<42){
-                            for(var y=$scope.calendarios.vectorDias.length; y<42; y++){
-                                $scope.calendarios.vectorDias.push($scope.calendarios.crearDia(''));
-                                if(y>=41){
-                                    $scope.calendarios.inspireList = $scope.calendarios.crearMatriz($scope.calendarios.vectorDias, 7); 
-                                    $scope.calendarios.pintarCalendario();   
-                                }
-                            }
-                        }
-                    }else{
-                        for(var j=0; j<primerDiaNum; j++){
-                            $scope.calendarios.vectorDias.unshift($scope.calendarios.crearDia(''));
-                            if(j>=primerDiaNum-1){
-                                if($scope.calendarios.vectorDias.length<42){
-                                    for(var y=$scope.calendarios.vectorDias.length; y<42; y++){
-                                        $scope.calendarios.vectorDias.push($scope.calendarios.crearDia(''));
-                                        if(y>=41){
-                                            $scope.calendarios.inspireList = $scope.calendarios.crearMatriz($scope.calendarios.vectorDias, 7);    
-                                            $scope.calendarios.pintarCalendario();
-                                        }
-                                    }
-                                }
+            }
+            
+            if(i>=$scope.calendarios.cantidadDias-1){
+                $scope.calendarios.armarCalendarioMes($scope.calendarios.primerDiaNum, $scope.calendarios.vectorDias);            
+            }
+        }
+    }
+
+    $scope.calendarios.armarCalendarioMes=function(primerDiaNum, vectorDias){
+        if(primerDiaNum==0){
+            if(vectorDias.length<42){
+                for(var y=vectorDias.length; y<42; y++){
+                    vectorDias.push($scope.calendarios.crearDia(''));
+                    if(y>=41){
+                        $scope.calendarios["inspireList"+$scope.calendarios.contador]=$scope.calendarios.crearMatriz(vectorDias, 7);
+                        $scope.calendarios.pintarCalendario();   
+                    }
+                }
+            }
+        }else{
+            for(var j=0; j<primerDiaNum; j++){
+                vectorDias.unshift($scope.calendarios.crearDia(''));
+                if(j>=primerDiaNum-1){
+                    if(vectorDias.length<42){
+                        for(var y=vectorDias.length; y<42; y++){
+                            vectorDias.push($scope.calendarios.crearDia(''));
+                            if(y>=41){
+                                $scope.calendarios["inspireList"+$scope.calendarios.contador] = $scope.calendarios.crearMatriz(vectorDias, 7);    
+                                $scope.calendarios.pintarCalendario();
                             }
                         }
                     }
                 }
             }
-            
         }
     }
+
     $scope.calendarios.mostradoMes=function(fecha){
         
         switch (fecha.getMonth()){
@@ -149,7 +169,7 @@ app.controller('calendariosCtrl', function($scope, $compile){
     
     $scope.calendarios.pintarCalendario=function(){
 
-        var divHtml="<div style='width: 30%; padding-left: 1%'>"+
+        var divHtml="<div id='calendario"+$scope.calendarios.contador+"' style='width: 30%; padding-left: 1%'>"+
             "<h2>"+$scope.calendarios.mesMostrado+"</h2>"+
             "<table class='table table-bordered'>"+
             "<thead>"+
@@ -164,7 +184,7 @@ app.controller('calendariosCtrl', function($scope, $compile){
                 "</tr>"+
             "</thead>"+
             "<tbody>"+
-                "<tr ng-repeat='items in calendarios.inspireList'>"+
+                "<tr ng-repeat='items in calendarios.inspireList"+$scope.calendarios.contador+"'>"+
                 "<td ng-repeat='item in items' style='height: 35px; background-color: {{item.color}}'>{{item.numDia}}</td>"+
                 "</tr>"+
             "</tbody>"+
@@ -175,5 +195,6 @@ app.controller('calendariosCtrl', function($scope, $compile){
         angular.element(document.getElementById('contenedorCalendarios')).append(vTemplate);
         $compile(vTemplate)($scope);
         /**********End bootstrapping **************/
+        $scope.calendarios.contador++;
     }
 });
