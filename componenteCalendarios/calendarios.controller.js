@@ -5,6 +5,11 @@ app.controller('calendariosCtrl', function($scope, $compile){
     $scope.calendarios.primeraFechaDelMes='';
     $scope.calendarios.contador=0;
     
+    /**
+    *Dada una fecha, crea un objeto "dia", con el color (verde entre semana,
+    *amarillo fin de semana y gris si la fecha es vacia),
+    *dia (texto y numero), mes y ano.
+    **/
     $scope.calendarios.crearDia=function(fecha){
         var elemento={}
         if(fecha!=""){
@@ -30,6 +35,10 @@ app.controller('calendariosCtrl', function($scope, $compile){
         }
     }
 
+    /**
+    * Crea una matriz correspondiente a un mes a partir
+    * de un vector con fechas,y un n que sera el tamano de cada fila (dias de la semana) 
+    */
     $scope.calendarios.crearMatriz = function(data, n) {
         var grid = [], i = 0, x = data.length, col, row = -1;
         for (var i = 0; i < x; i++) {
@@ -43,24 +52,31 @@ app.controller('calendariosCtrl', function($scope, $compile){
     };
 
     $scope.calendarios.limpiarPantalla=function(){
+        //valida que se halla ingresado una fecha inicial y una cantidad de dias
         if(($scope.calendarios.fechaInicial!='')&&($scope.calendarios.cantidadDiasElegidos!='')){
             $scope.calendarios.cantidadDias=$scope.calendarios.cantidadDiasElegidos;
             $scope.calendarios.primeraFechaDelMes=$("#start").val();
-            /* --Remover calendarios--*/
+            
+            /* --Remueve calendarios en caso que halla alguno para empezar a generar los nuevos--*/
             var element = document.getElementById('contenedorCalendarios');
             while (element.firstChild) {
             element.removeChild(element.firstChild);
             }
             /* --Fin remover calendarios--*/
+
             $scope.calendarios.generarMes();
         }
     }
 
+    /**
+    *Genera un vector de fechas a partir de una fecha inicial y una cantidad de 
+    *dias, indicada ya sea por el usuario inicialmente, o por el primer dia del mes siguiente 
+    *y la cantidad de dias restantes despues de haber generado el primer mes
+    */
     $scope.calendarios.generarMes=function(){
         
         $scope.calendarios.vectorDias=[];
         var fechaInicial=$scope.calendarios.primeraFechaDelMes;
-        console.log(fechaInicial);
         var arrayAordenar=fechaInicial.split('-');
         var fechaEspanol=arrayAordenar[0]+"/"+arrayAordenar[1]+"/"+arrayAordenar[2];
         
@@ -77,6 +93,8 @@ app.controller('calendariosCtrl', function($scope, $compile){
         for(var i=1; i<$scope.calendarios.cantidadDias; i++){
             fecha.setDate(fecha.getDate() + 1);
            
+            /*Si el numero de mes es diferente al del primer dia, indica que se trata del nuevo mes,
+            se termina el ciclo for, y se vuelve a llamar este mismo metodo para generar el nuevo mes*/
             if(fecha.getMonth()!=primerDia.getMonth()){
                 $scope.calendarios.armarCalendarioMes($scope.calendarios.primerDiaNum, $scope.calendarios.vectorDias);            
                 var vectorfecha=fecha.toString().split(' ');
@@ -85,7 +103,6 @@ app.controller('calendariosCtrl', function($scope, $compile){
                 $scope.calendarios.cantidadDias=$scope.calendarios.cantidadDias-i;
                 i=$scope.calendarios.cantidadDias-1;
                 $scope.calendarios.generarMes();
-               // break;
             }else{
                 $scope.calendarios.vectorDias.push($scope.calendarios.crearDia(fecha));
             }
@@ -96,6 +113,10 @@ app.controller('calendariosCtrl', function($scope, $compile){
         }
     }
 
+    /**
+     * El metodo que llama a este crea el vector de fechas para cada mes, y en este metodo
+     * se agregan los dias vacios para completar el mes, luego se manda a llamar el metodo que crea la matriz a pintar
+     */
     $scope.calendarios.armarCalendarioMes=function(primerDiaNum, vectorDias){
         if(primerDiaNum==0){
             if(vectorDias.length<42){
@@ -125,6 +146,9 @@ app.controller('calendariosCtrl', function($scope, $compile){
         }
     }
 
+    /**
+     * Indica el mes que se esta mostrando segun el numero de mes obtenido del metodo javascrit "getMonth()"
+     */
     $scope.calendarios.mostradoMes=function(fecha){
         
         switch (fecha.getMonth()){
@@ -166,9 +190,10 @@ app.controller('calendariosCtrl', function($scope, $compile){
           break;
         } 
     }
-    
+    /**
+     * Se crea la vista del calendario, y se agrega a su contenedor por medio de bootstrapping
+     * */    
     $scope.calendarios.pintarCalendario=function(){
-
         var divHtml="<div id='calendario"+$scope.calendarios.contador+"' style='width: 30%; padding-left: 1%'>"+
             "<h2>"+$scope.calendarios.mesMostrado+"</h2>"+
             "<table class='table table-bordered'>"+
