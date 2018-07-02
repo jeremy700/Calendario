@@ -183,7 +183,7 @@ app.controller('calendariosCtrl', function($scope, $compile){
             $scope.calendarios.mesMostrado="Octubre "+fecha.getFullYear();
           break;
           case 10:
-            $scope.calendarios.mesMostrado="Nobiembre "+fecha.getFullYearar();
+            $scope.calendarios.mesMostrado="Nobiembre "+fecha.getFullYear();
           break;
           case 11:
             $scope.calendarios.mesMostrado="Diciembre "+fecha.getFullYear();
@@ -194,7 +194,8 @@ app.controller('calendariosCtrl', function($scope, $compile){
      * Se crea la vista del calendario, y se agrega a su contenedor por medio de bootstrapping
      * */    
     $scope.calendarios.pintarCalendario=function(){
-        var divHtml="<div id='calendario"+$scope.calendarios.contador+"' style='width: 30%; padding-left: 1%'>"+
+        var divHtml="<div id='calendario"+$scope.calendarios.contador+"' style='width: 30%; padding-left: 1%; display: inline-flex'>"+
+        "<div>"+
             "<h2>"+$scope.calendarios.mesMostrado+"</h2>"+
             "<table class='table table-bordered'>"+
             "<thead>"+
@@ -214,6 +215,7 @@ app.controller('calendariosCtrl', function($scope, $compile){
                 "</tr>"+
             "</tbody>"+
             "</table>"+
+            "</div>"+
         "</div>";
         /*************bootstrapping ***************/
         var vTemplate = angular.element(divHtml);
