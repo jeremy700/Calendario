@@ -194,8 +194,8 @@ app.controller('calendariosCtrl', function($scope, $compile){
      * Se crea la vista del calendario, y se agrega a su contenedor por medio de bootstrapping
      * */    
     $scope.calendarios.pintarCalendario=function(){
-        var divHtml="<div id='calendario"+$scope.calendarios.contador+"' style='width: 30%; padding-left: 1%; display: inline-flex'>"+
-        "<div>"+
+        var divHtml="<div id='calendario"+$scope.calendarios.contador+"' class='calendario'>"+
+        "<div style='width:100%'>"+
             "<h2>"+$scope.calendarios.mesMostrado+"</h2>"+
             "<table class='table table-bordered'>"+
             "<thead>"+
