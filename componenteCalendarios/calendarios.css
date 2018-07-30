@@ -1,18 +1,16 @@
+* {
+    box-sizing: border-box;
+}
+
 .formulario{
     width: 100%; 
     height: auto; 
     padding: 5vh
 }
 .calendario{
-    width: 25%; 
+    width: 33%; 
     padding-left: 1%; 
     float: left
-}
-
-@media screen and (max-width: 1200px) {
-    .calendario{
-      width: 33%;
-    }
 }
 
 @media screen and (max-width: 920px) {
