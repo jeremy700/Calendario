@@ -4,9 +4,15 @@
     padding: 5vh
 }
 .calendario{
-    width: 33%; 
+    width: 25%; 
     padding-left: 1%; 
     float: left
+}
+
+@media screen and (max-width: 1200px) {
+    .calendario{
+      width: 33%;
+    }
 }
 
 @media screen and (max-width: 920px) {
